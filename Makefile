@@ -11,7 +11,7 @@ LIBDIR=lib/
 TESTDIR=test/
 
 CC=gcc
-CFLAGS=-fPIC -Wall -I$(LIBDIR)
+CFLAGS=-fPIC -Wall -Werror -I$(LIBDIR)
 CLIBS=-lm
 
 all: $(BINDIR)sC.test tmp
@@ -25,5 +25,5 @@ tmp: tmp.c
 
 $(BINDIR)sC.test: $(TESTDIR)sC.test.c $(LIBDIR)sC.h
 	$(info Building sC test.)
-	$(CC) $(CFLAGS) -o $(BINDIR)s.test \
+	$(CC) $(CFLAGS) -o $(BINDIR)sC.test \
 		$(TESTDIR)sC.test.c $(CLIBS)

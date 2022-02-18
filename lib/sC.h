@@ -10,6 +10,7 @@
 #define _S_C_H_
 
 #include <time.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
@@ -29,6 +30,48 @@
 typedef int sBool;
 
 // Bool
+///////////////////////////////////////////////////////////////////////////////
+// Random
+
+// Function: sRand
+// Description: Generates random float in range [0,1].
+// Params:
+//   .
+// Return Value: float, random number in range [0,1].
+// Example:
+//   .
+extern inline float sRand() {
+  return (float)rand() / (float)((unsigned)RAND_MAX + 1);
+}
+
+extern inline int sRandInt(int low, int high) {
+  if (high < low) { return 0; }
+  if (low == high) { return low; }
+  return (rand() % (high - low + 1)) + low;
+}
+
+extern inline float sRandNormal(float mu, float sigma) {
+  float run_total = 0;
+  const int n_samples = 10;
+  for (int i = 0; i < n_samples; i++) {
+    run_total += sRand();
+  }
+  return sigma * (run_total - n_samples/2) / (n_samples/2) + mu;
+}
+
+// function sRandNormal(mu, sigma, nsamples=10){
+//   if(!sigma) sigma = 1
+//   if(!mu) mu=0
+
+//   var run_total = 0
+//   for(var i=0 ; i<nsamples ; i++){
+//      run_total += Math.random()
+//   }
+
+//   return sigma*(run_total - nsamples/2)/(nsamples/2) + mu
+// }
+
+// Random
 ///////////////////////////////////////////////////////////////////////////////
 // Old sJS Functions
 
@@ -118,22 +161,38 @@ extern inline sBool sFuzzyEquals(double v1, double v2, double fuzz) {
 ///////////////////////////////////////////////////////////////////////////////
 // Complex Variables
 
-typedef int8_t sComplexType;
+typedef float sComplexType;
 
 typedef struct sComplex {
   sComplexType real;
   sComplexType imag;
 } sComplex;
 
+extern inline int sComplexAdd(sComplex* dest, const sComplex* b) {
+  dest->real += b->real;
+  dest->imag += b->imag;
+  return 0;
+}
+
+extern inline int sComplexSet(sComplex* dest, sComplexType r, sComplexType i) {
+  dest->real = r;
+  dest->imag = i;
+  return 0;
+}
+
+extern inline sComplexType sComplexMag(const sComplex* a) {
+  return pow( (a->real * a->real) + (a->imag * a->imag), 0.5);
+}
+
+extern inline sComplexType sComplexAngle(const sComplex* a) {
+  return atan2(a->imag, a->real);
+}
+
 // Complex Variables
 ///////////////////////////////////////////////////////////////////////////////
 // Fast Trig
 
-#ifdef ENABLE_S_FAST_TRIG
-
-typedef int8_t sFastTrigType;
-#define sFastCosNumBits ((int)8 * (sizeof(sFastTrigType)))
-#define sFastCosTableLen ((int) pow(2, sFastCosNumBits))
+#ifdef ENABLE_S_FAST_TRIG_FLOAT
 
 // Function: sDefineFastCosTable
 // Description: Computes cosine the cosine lookup table used in other funcs.
@@ -142,25 +201,25 @@ typedef int8_t sFastTrigType;
 // Return Value: [0, MAX_OF_THIS_TYPE] (pseudo [-1, 1])
 // Example:
 //  TODO: provide example.
-extern inline int sDefineFastCosTable(sFastTrigType* table) {
-  int max = ((int) pow(2, sFastCosNumBits)/2);
-  float factor = 2 * sPi / (((float) max));
-  sFastTrigType half = 0;
-  for (int i = 0; i < 8*sizeof(sFastTrigType)-1; i++) {
-    half = half << 1;
-  }
+// extern inline int sDefineFastCosTable(sFastTrigType* table) {
+//   int max = ((int) pow(2, sFastCosNumBits)/2);
+//   float factor = 2 * sPi / (((float) max));
+//   sFastTrigType half = 0;
+//   for (int i = 0; i < 8*sizeof(sFastTrigType)-1; i++) {
+//     half = half << 1;
+//   }
 
-  printf("max: %d, factor: %f, tablelen: %d, half: %d\n", max, factor,
-    sFastCosTableLen, half);
+//   printf("max: %d, factor: %f, tablelen: %d, half: %d\n", max, factor,
+//     sFastCosTableLen, half);
 
-  for (int i = 0; i < sFastCosTableLen; i++) {
-    float p = factor * i;
-    table[i] = cos(p) * half + half;
-  }
-  printf("\n");
+//   for (int i = 0; i < sFastCosTableLen; i++) {
+//     float p = factor * i;
+//     table[i] = cos(p) * half + half;
+//   }
+//   printf("\n");
 
-  return 0;
-}
+//   return 0;
+// }
 
 // Function: sFastCos
 // Description: Computes cosine using lookup table, faster than std library.
@@ -170,10 +229,10 @@ extern inline int sDefineFastCosTable(sFastTrigType* table) {
 // Return Value: [0, MAX_OF_THIS_TYPE] (pseudo [-1, 1])
 // Example:
 //  TODO: provide example.
-extern inline sFastTrigType sFastCos(sFastTrigType a,
-    const sFastTrigType* table) {
-  return a;
-}
+// extern inline sFastTrigType sFastCos(sFastTrigType a,
+//     const sFastTrigType* table) {
+//   return a;
+// }
 
 #endif
 

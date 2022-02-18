@@ -1,15 +1,19 @@
 
+#include "sC.h"
+
 #include <stdio.h>
 #include <math.h>
+
+int FFT(float* result, float* input) {
+  return 0;
+}
 
 int main(int argc, char* argv[]) {
   printf("Hello tmp.c.\n");
 
-  double pi = 3.1415926;
-  double val = 0.5 * pi;
-  double d = cos(val);
-
-  printf("cos(%f) = %f\n", val, d);
+  for (int i = 0; i < 10; i++) {
+    printf("%f\n", sRandNormal(0, 1));
+  }
 
   return 0;
 }

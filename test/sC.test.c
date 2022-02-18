@@ -11,6 +11,7 @@
 #include "sC.h"
 
 #include <stdio.h>
+#include <string.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Test Functions
@@ -25,21 +26,34 @@ void Test_sBool() {
   printf("0|False: %d\n", false_is);
 }
 
-void Test_sAbs() {
+void Test_sRandom() {
   printf("==== %s ====\n", __func__);
 
-  double a = 2.2;
-  double b = a * (-1);
+  printf("?|float, [0, 1]: %f\n", sRand());
+  printf("?|float, [0, 10]: %f\n", sRand()*10);
+
+  printf("0|int  , [0, -1]: %d\n", sRandInt(0, -1));
+  printf("0|int  , [0, 0]: %d\n", sRandInt(0, 0));
+  printf("?|int  , [0, 1]: %d\n", sRandInt(0, 1));
+  printf("?|int  , [0, 9]: %d\n", sRandInt(0, 9));
+
+  printf("?|float, [-1,1] ish: %f\n", sRandNormal(0, 1));
+}
+
+void Test_sArithmetic() {
+  printf("==== %s ====\n", __func__);
+
+  double a = 0;
+  double b = 0;
+
+  a = 2.2;
+  b = a * (-1);
 
   printf("1|Self: %d\n", sAbs(a) == a);
   printf("1|Negated: %d\n", sAbs(b) == a);
-}
-
-void Test_sFuzzyEquals() {
-  printf("==== %s ====\n", __func__);
-
-  double a = 3.1415926;
-  double b = 3.14;
+  
+  a = 3.1415926;
+  b = 3.14;
 
   printf("1|Self: %d\n", sFuzzyEquals(a, a, 0.0000000001));
   printf("0|6 sigs: %d\n", sFuzzyEquals(a, b, 0.000001));
@@ -49,12 +63,8 @@ void Test_sFuzzyEquals() {
   printf("1|2 sigs: %d\n", sFuzzyEquals(a, b, 0.01));
   printf("1|1 sigs: %d\n", sFuzzyEquals(a, b, 0.1));
   printf("1|0 sigs: %d\n", sFuzzyEquals(a, b, 1));
-}
 
-void Test_sClamp() {
-  printf("==== %s ====\n", __func__);
-
-  double a = 10;
+  a = 10;
 
   double self = sClamp(a, a, a);
   printf("1|Self Clamp: %d\n", self == a);
@@ -72,49 +82,33 @@ void Test_sClamp() {
   printf("1|Edge Clamp: %d\n", edge < a);
 }
 
-void Test_sDate() {
+void Test_sDateAndTime() {
   printf("==== %s ====\n", __func__);
 
-  char buf[10];
+  int N = 10;
+  char buf[N];
   int retval = -1;
 
+  memset(buf, 0, N);
   retval = sDate(buf);
 
   printf("Today's Date|Date: %s\n", buf);
   printf("0|Return value: %d\n", retval);
-}
-
-void Test_sDateUTC() {
-  printf("==== %s ====\n", __func__);
   
-  char buf[10];
-  int retval = -1;
-
+  memset(buf, 0, N);
   retval = sDateUTC(buf);
 
   printf("Today's Date UTC|Date: %s\n", buf);
   printf("0|Return value: %d\n", retval);
-}
-
-void Test_sTime() {
-  printf("==== %s ====\n", __func__);
   
-  char buf[8];
-  int retval = -1;
-
+  memset(buf, 0, N);
   retval = sTime(buf);
 
   printf("Local Time|Time: %s\n", buf);
   printf("0|Return value: %d\n", retval);
-}
 
-void Test_sTimeUTC() {
-  printf("==== %s ====\n", __func__);
-  
-  char buf[8];
-  int retval = -1;
-
-  retval = sTime(buf);
+  memset(buf, 0, N);
+  retval = sTimeUTC(buf);
 
   printf("UTC Time|Time: %s\n", buf);
   printf("0|Return value: %d\n", retval);
@@ -123,21 +117,21 @@ void Test_sTimeUTC() {
 void Test_sFastTrig() {
   printf("==== %s ====\n", __func__);
 
-  sFastTrigType value = 255;
-  value += 1;
+  // sFastTrigType value = 255;
+  // value += 1;
 
-  printf("?|Value = %d\n", value);
+  // printf("?|Value = %d\n", value);
 
-  // sFastTrigType zero = 0;
-  // uint64_t max = ((uint64_t) zero - 1);
-  int len = pow(2,8);
-  sFastTrigType table[len];
-  sDefineFastCosTable(table);
+  // // sFastTrigType zero = 0;
+  // // uint64_t max = ((uint64_t) zero - 1);
+  // int len = pow(2,8);
+  // sFastTrigType table[len];
+  // sDefineFastCosTable(table);
 
-  for (int i = 0; i < len; i++) {
-    printf("%d,", table[i]);
-  }
-  printf("\n");
+  // for (int i = 0; i < len; i++) {
+  //   printf("%d,", table[i]);
+  // }
+  // printf("\n");
 }
 
 // Test Functions
@@ -145,14 +139,12 @@ void Test_sFastTrig() {
 // Main
 
 int main(int argc, char* argv[]) {
+  srand(time(0));
+
   Test_sBool();
-  Test_sAbs();
-  Test_sFuzzyEquals();
-  Test_sClamp();
-  Test_sDate();
-  Test_sDateUTC();
-  Test_sTime();
-  Test_sTimeUTC();
+  Test_sRandom();
+  Test_sArithmetic();
+  Test_sDateAndTime();
   Test_sFastTrig();
 
   return 0;
