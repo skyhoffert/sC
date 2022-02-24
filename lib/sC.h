@@ -139,6 +139,18 @@ extern inline float sRandNormal(float mu, float sigma) {
 
 // Old sJS Functions
 ///////////////////////////////////////////////////////////////////////////////
+// Trig
+
+extern inline float sCos(float val) {
+  return cos(val);
+}
+
+extern inline float sSin(float val) {
+  return sin(val);
+}
+
+// Trig
+///////////////////////////////////////////////////////////////////////////////
 // Arithmetic
 
 extern inline double sAbs(double v) {
@@ -155,6 +167,10 @@ extern inline double sClamp(double v, double min, double max) {
 
 extern inline sBool sFuzzyEquals(double v1, double v2, double fuzz) {
   return sAbs(v1 - v2) < fuzz ? sTrue : sFalse;
+}
+
+extern inline float sLog10(float val) {
+  return log10(val);
 }
 
 // Arithmetic
@@ -186,6 +202,22 @@ extern inline sComplexType sComplexMag(const sComplex* a) {
 
 extern inline sComplexType sComplexAngle(const sComplex* a) {
   return atan2(a->imag, a->real);
+}
+
+extern inline int sDFT(sComplex* res, const float* sig, int n_data, int n_fft) {
+  for (int i = 0; i < n_fft; i++) {
+    sComplex sum;
+    sComplexSet(&sum, 0, 0);
+    for (int s = 0; s < n_data; s++) {
+      sComplex re_im;
+      re_im.real = sig[s] * sCos(2 * sPi * i * s / n_fft);
+      re_im.imag = sig[s] * -sSin(2 * sPi * i * s / n_fft);
+      sComplexAdd(&sum, &re_im);
+    }
+    res[i].real = sum.real;
+    res[i].imag = sum.imag;
+  }
+  return 0;
 }
 
 // Complex Variables
